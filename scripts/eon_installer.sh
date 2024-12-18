@@ -2,7 +2,7 @@
 rm -fr /data/openpilot ;
 cd /data/ &&
 
-git clone https://github.com/dragonpilot-community/dragonpilot -b "r2-better" --single-branch --recurse-submodules --depth=1 openpilot &&
+git clone https://github.com/Oznerii-prog/dragonpilot -b "r2-better" --single-branch --recurse-submodules --depth=1 openpilot &&
 
 touch /data/data/com.termux/files/continue.sh &&
 echo "#!/usr/bin/bash" >> /data/data/com.termux/files/continue.sh &&
