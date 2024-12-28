@@ -238,6 +238,8 @@ function agnos_init {
 }
 
 function launch {
+  echo 1 > /data/params/d/dp_atl
+
   # Remove orphaned git lock if it exists on boot
   [ -f "$DIR/.git/index.lock" ] && rm -f $DIR/.git/index.lock
 
