@@ -6,7 +6,7 @@ from pathlib import Path
 from typing import Optional
 
 from datetime import datetime, timedelta
-from common.api import api_get
+from common.api import api_get, API_HOST
 from common.params import Params
 from common.spinner import Spinner
 from common.basedir import PERSIST
@@ -25,6 +25,8 @@ def is_registered_device() -> bool:
 
 def register(show_spinner=False) -> Optional[str]:
   params = Params()
+  if "commadotai" in API_HOST and (Params().get_bool("dp_jetson") or Params().get_bool("dp_atl")):
+    return UNREGISTERED_DONGLE_ID
   params.put("SubscriberInfo", HARDWARE.get_subscriber_info())
 
   IMEI = params.get("IMEI", encoding='utf8')

@@ -5,6 +5,9 @@ API_HOST = os.getenv('API_HOST', 'https://api.commadotai.com') if not Params().g
 
 class CommaApi():
   def __init__(self, token=None):
+    if "commadotai" in API_HOST and (Params().get_bool("dp_jetson") or Params().get_bool("dp_atl")):
+      raise RuntimeError("API access is disabled because you are not using custom server and you have jetson enabled.")
+
     self.session = requests.Session()
     self.session.headers['User-agent'] = 'OpenpilotTools'
     if token:
