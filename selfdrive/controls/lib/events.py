@@ -680,8 +680,11 @@ EVENTS: Dict[int, Dict[str, Union[Alert, AlertCallbackType]]] = {
   },
 
   EventName.steerTempUnavailable: {
-    ET.SOFT_DISABLE: soft_disable_alert(_("Steering Temporarily Unavailable")),
-    ET.NO_ENTRY: NoEntryAlert(_("Steering Temporarily Unavailable")),
+    ET.WARNING: Alert(
+      _("Steering Temporarily Unavailable"),
+      "",
+      AlertStatus.userPrompt, AlertSize.small,
+      Priority.LOW, VisualAlert.steerRequired, AudibleAlert.prompt, 1.8),
   },
 
   EventName.outOfSpace: {
@@ -708,8 +711,8 @@ EVENTS: Dict[int, Dict[str, Union[Alert, AlertCallbackType]]] = {
   },
 
   EventName.soundsUnavailable: {
-    ET.PERMANENT: NormalPermanentAlert(_("Speaker not found"), _("Reboot your Device")),
-    ET.NO_ENTRY: NoEntryAlert(_("Speaker not found")),
+    # ET.PERMANENT: NormalPermanentAlert(_("Speaker not found"), _("Reboot your Device")),
+    # ET.NO_ENTRY: NoEntryAlert(_("Speaker not found")),
   },
 
   EventName.tooDistracted: {
@@ -718,7 +721,7 @@ EVENTS: Dict[int, Dict[str, Union[Alert, AlertCallbackType]]] = {
 
   EventName.overheat: {
     ET.PERMANENT: overheat_alert,
-    ET.SOFT_DISABLE: soft_disable_alert(_("System Overheated")),
+    # ET.SOFT_DISABLE: soft_disable_alert(_("System Overheated")),
     ET.NO_ENTRY: NoEntryAlert(_("System Overheated")),
   },
 
@@ -789,7 +792,7 @@ EVENTS: Dict[int, Dict[str, Union[Alert, AlertCallbackType]]] = {
   },
 
   EventName.radarFault: {
-    ET.SOFT_DISABLE: soft_disable_alert(_("Radar Error: Restart the Car")),
+    # ET.SOFT_DISABLE: soft_disable_alert(_("Radar Error: Restart the Car")),
     ET.NO_ENTRY: NoEntryAlert(_("Radar Error: Restart the Car")),
   },
 
@@ -797,7 +800,7 @@ EVENTS: Dict[int, Dict[str, Union[Alert, AlertCallbackType]]] = {
   # is not processing frames fast enough they have to be dropped. This alert is
   # thrown when over 20% of frames are dropped.
   EventName.modeldLagging: {
-    ET.SOFT_DISABLE: soft_disable_alert(_("Driving Model Lagging")),
+    # ET.SOFT_DISABLE: soft_disable_alert(_("Driving Model Lagging")),
     ET.NO_ENTRY: NoEntryAlert(_("Driving Model Lagging")),
     ET.PERMANENT: modeld_lagging_alert,
   },
@@ -827,14 +830,12 @@ EVENTS: Dict[int, Dict[str, Union[Alert, AlertCallbackType]]] = {
 
   EventName.highCpuUsage: {
     #ET.SOFT_DISABLE: soft_disable_alert(_("System Malfunction: Reboot Your Device")),
-    #ET.PERMANENT: NormalPermanentAlert(_("System Malfunction"), _("Reboot your Device")),
+    ET.PERMANENT: NormalPermanentAlert(_("System Malfunction"), _("Reboot your Device")),
     ET.NO_ENTRY: high_cpu_usage_alert,
   },
 
   EventName.accFaulted: {
-    ET.IMMEDIATE_DISABLE: ImmediateDisableAlert(_("Cruise Fault: Restart the Car")),
-    ET.PERMANENT: NormalPermanentAlert(_("Cruise Fault: Restart the car to engage")),
-    ET.NO_ENTRY: NoEntryAlert(_("Cruise Fault: Restart the Car")),
+    ET.NO_ENTRY: NoEntryAlert("Cruise Temporarily Faulted"),
   },
 
   EventName.accFaultedTemp: {
@@ -842,7 +843,7 @@ EVENTS: Dict[int, Dict[str, Union[Alert, AlertCallbackType]]] = {
   },
 
   EventName.controlsMismatch: {
-    ET.IMMEDIATE_DISABLE: ImmediateDisableAlert(_("Controls Mismatch")),
+    # ET.IMMEDIATE_DISABLE: ImmediateDisableAlert(_("Controls Mismatch")),
     ET.NO_ENTRY: NoEntryAlert(_("Controls Mismatch")),
   },
 
@@ -877,7 +878,7 @@ EVENTS: Dict[int, Dict[str, Union[Alert, AlertCallbackType]]] = {
   # - CAN data is received, but some message are not received at the right frequency
   # If you're not writing a new car port, this is usually cause by faulty wiring
   EventName.canError: {
-    ET.IMMEDIATE_DISABLE: ImmediateDisableAlert(_("CAN Error")),
+    # ET.IMMEDIATE_DISABLE: ImmediateDisableAlert(_("CAN Error")),
     ET.PERMANENT: Alert(
       _("CAN Error: Check Connections"),
       "",
@@ -887,7 +888,7 @@ EVENTS: Dict[int, Dict[str, Union[Alert, AlertCallbackType]]] = {
   },
 
   EventName.canBusMissing: {
-    ET.IMMEDIATE_DISABLE: ImmediateDisableAlert(_("CAN Bus Disconnected")),
+    # ET.IMMEDIATE_DISABLE: ImmediateDisableAlert(_("CAN Bus Disconnected")),
     ET.PERMANENT: Alert(
       _("CAN Bus Disconnected: Likely Faulty Cable"),
       "",
@@ -897,13 +898,13 @@ EVENTS: Dict[int, Dict[str, Union[Alert, AlertCallbackType]]] = {
   },
 
   EventName.steerUnavailable: {
-    ET.IMMEDIATE_DISABLE: ImmediateDisableAlert(_("LKAS Fault: Restart the Car")),
+    # ET.IMMEDIATE_DISABLE: ImmediateDisableAlert(_("LKAS Fault: Restart the Car")),
     ET.PERMANENT: NormalPermanentAlert(_("LKAS Fault: Restart the car to engage")),
     ET.NO_ENTRY: NoEntryAlert(_("LKAS Fault: Restart the Car")),
   },
 
   EventName.brakeUnavailable: {
-    ET.IMMEDIATE_DISABLE: ImmediateDisableAlert(_("Cruise Fault: Restart the Car")),
+    # ET.IMMEDIATE_DISABLE: ImmediateDisableAlert(_("Cruise Fault: Restart the Car")),
     ET.PERMANENT: NormalPermanentAlert(_("Cruise Fault: Restart the car to engage")),
     ET.NO_ENTRY: NoEntryAlert(_("Cruise Fault: Restart the Car")),
   },
@@ -921,14 +922,15 @@ EVENTS: Dict[int, Dict[str, Union[Alert, AlertCallbackType]]] = {
   # On cars that use stock ACC the car can decide to cancel ACC for various reasons.
   # When this happens we can no long control the car so the user needs to be warned immediately.
   EventName.cruiseDisabled: {
-    ET.IMMEDIATE_DISABLE: ImmediateDisableAlert(_("Cruise Is Off")),
+    # ET.IMMEDIATE_DISABLE: ImmediateDisableAlert(_("Cruise Is Off")),
+    ET.NO_ENTRY: NoEntryAlert(_("Cruise Is Off")),
   },
 
   # For planning the trajectory Model Predictive Control (MPC) is used. This is
   # an optimization algorithm that is not guaranteed to find a feasible solution.
   # If no solution is found or the solution has a very high cost this alert is thrown.
   EventName.plannerError: {
-    ET.IMMEDIATE_DISABLE: ImmediateDisableAlert(_("Planner Solution Error")),
+    # ET.IMMEDIATE_DISABLE: ImmediateDisableAlert(_("Planner Solution Error")),
     ET.NO_ENTRY: NoEntryAlert(_("Planner Solution Error")),
   },
 
@@ -937,17 +939,17 @@ EVENTS: Dict[int, Dict[str, Union[Alert, AlertCallbackType]]] = {
   # are received on the car side this usually means the relay hasn't opened correctly
   # and this alert is thrown.
   EventName.relayMalfunction: {
-    ET.IMMEDIATE_DISABLE: ImmediateDisableAlert(_("Harness Relay Malfunction")),
+    # ET.IMMEDIATE_DISABLE: ImmediateDisableAlert(_("Harness Relay Malfunction")),
     ET.PERMANENT: NormalPermanentAlert(_("Harness Relay Malfunction"), _("Check Hardware")),
     ET.NO_ENTRY: NoEntryAlert(_("Harness Relay Malfunction")),
   },
 
   EventName.speedTooLow: {
-    ET.IMMEDIATE_DISABLE: Alert(
-      _("openpilot Canceled"),
-      _("Speed too low"),
-      AlertStatus.normal, AlertSize.mid,
-      Priority.HIGH, VisualAlert.none, AudibleAlert.disengage, 3.),
+    # ET.IMMEDIATE_DISABLE: Alert(
+    #   _("openpilot Canceled"),
+    #   _("Speed too low"),
+    #   AlertStatus.normal, AlertSize.mid,
+    #   Priority.HIGH, VisualAlert.none, AudibleAlert.disengage, 3.),
   },
 
   # When the car is driving faster than most cars in the training data, the model outputs can be unpredictable.
@@ -961,12 +963,12 @@ EVENTS: Dict[int, Dict[str, Union[Alert, AlertCallbackType]]] = {
   },
 
   EventName.lowSpeedLockout: {
-    ET.PERMANENT: NormalPermanentAlert(_("Cruise Fault: Restart the car to engage")),
+    # ET.PERMANENT: NormalPermanentAlert(_("Cruise Fault: Restart the car to engage")),
     ET.NO_ENTRY: NoEntryAlert(_("Cruise Fault: Restart the Car")),
   },
 
   EventName.lkasDisabled: {
-    ET.PERMANENT: NormalPermanentAlert(_("LKAS Disabled: Enable LKAS to engage")),
+    # ET.PERMANENT: NormalPermanentAlert(_("LKAS Disabled: Enable LKAS to engage")),
     ET.NO_ENTRY: NoEntryAlert(_("LKAS Disabled")),
   },
 

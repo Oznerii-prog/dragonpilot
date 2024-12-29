@@ -314,7 +314,7 @@ class CarInterfaceBase(ABC):
     if cs_out.parkingBrake:
       events.add(EventName.parkBrake)
     if cs_out.accFaulted:
-      events.add(EventName.accFaulted)
+      events.add(EventName.accFaultedTemp)
     if cs_out.steeringPressed:
       events.add(EventName.steerOverride)
 
@@ -335,11 +335,11 @@ class CarInterfaceBase(ABC):
         self.silent_steer_warning = True
         events.add(EventName.steerTempUnavailableSilent)
       else:
-        events.add(EventName.steerTempUnavailable)
+        events.add(EventName.steerTempUnavailableSilent)
     else:
       self.silent_steer_warning = False
     if cs_out.steerFaultPermanent:
-      events.add(EventName.steerUnavailable)
+      events.add(EventName.steerTempUnavailableSilent)
 
     # we engage when pcm is active (rising edge)
     # enabling can optionally be blocked by the car interface

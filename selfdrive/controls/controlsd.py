@@ -422,7 +422,7 @@ class Controls:
           self.events.add(EventName.cameraFrameRate)
     # if self.rk.lagging:
     #   self.events.add(EventName.controlsdLagging)
-    if len(self.sm['radarState'].radarErrors) or not self.sm.all_checks(['radarState']):
+    if self.CP.openpilotLongitudinalControl and (len(self.sm['radarState'].radarErrors) or not self.sm.all_checks(['radarState'])):
       self.events.add(EventName.radarFault)
     if not self.sm.valid['pandaStates']:
       self.events.add(EventName.usbError)
@@ -459,7 +459,7 @@ class Controls:
     if not self.sm['liveParameters'].valid:
       self.events.add(EventName.vehicleModelInvalid)
     if not self.sm['lateralPlan'].mpcSolutionValid:
-      self.events.add(EventName.steerTempUnavailable if self.sm['dragonConf'].dpAtl else EventName.plannerError)
+      self.events.add(EventName.steerTempUnavailableSilent if self.sm['dragonConf'].dpAtl else EventName.plannerError)
     if not (self.sm['liveParameters'].sensorValid or self.sm['liveLocationKalman'].sensorsOK) and not NOSENSOR:
       if self.sm.frame > 5 / DT_CTRL:  # Give locationd some time to receive all the inputs
         self.events.add(EventName.sensorDataInvalid)
