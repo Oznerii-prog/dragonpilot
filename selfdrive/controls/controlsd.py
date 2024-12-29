@@ -98,7 +98,7 @@ class Controls:
       if self.params.get_bool('WideCameraOnly'):
         ignore += ['roadCameraState']
       if self.dp_jetson:
-        ignore += ['driverCameraState', 'driverMonitoringState']
+        ignore = ['driverCameraState', 'driverMonitoringState'] if ignore is None else ignore + ['driverCameraState', 'driverMonitoringState']
       self.sm = messaging.SubMaster(['deviceState', 'pandaStates', 'peripheralState', 'modelV2', 'liveCalibration',
                                      'driverMonitoringState', 'longitudinalPlan', 'lateralPlan', 'liveLocationKalman',
                                      'managerState', 'liveParameters', 'radarState', 'liveTorqueParameters', 'dragonConf', 'testJoystick'] + self.camera_packets,
@@ -416,7 +416,7 @@ class Controls:
       self.events.add(EventName.processNotRunning)
     else:
       if not SIMULATION and not self.rk.lagging:
-        if not self.sm.all_alive(self.camera_packets):
+        if not self.dp_jetson and not self.sm.all_alive(self.camera_packets):
           self.events.add(EventName.cameraMalfunction)
         elif not self.sm.all_freq_ok(self.camera_packets):
           self.events.add(EventName.cameraFrameRate)
@@ -429,19 +429,20 @@ class Controls:
     if CS.canTimeout:
       self.events.add(EventName.canBusMissing)
     elif not CS.canValid:
-      self.events.add(EventName.canError)
+      self.events.add(EventName.pcmDisable if self.sm['dragonConf'].dpAtl else EventName.canError)
 
     # generic catch-all. ideally, a more specific event should be added above instead
     can_rcv_timeout = self.can_rcv_timeout_counter >= 5
     has_disable_events = self.events.any(ET.NO_ENTRY) and (self.events.any(ET.SOFT_DISABLE) or self.events.any(ET.IMMEDIATE_DISABLE))
     no_system_errors = (not has_disable_events) or (len(self.events) == num_events)
-    if (not self.sm.all_checks() or can_rcv_timeout) and no_system_errors:
-      if not self.sm.all_alive():
-        self.events.add(EventName.commIssue)
-      elif not self.sm.all_freq_ok():
-        self.events.add(EventName.commIssueAvgFreq)
-      else:  # invalid or can_rcv_timeout.
-        self.events.add(EventName.commIssue)
+    if not self.dp_jetson:
+      if (not self.sm.all_checks() or can_rcv_timeout) and no_system_errors:
+        if not self.sm.all_alive():
+          self.events.add(EventName.commIssue)
+        elif not self.sm.all_freq_ok():
+          self.events.add(EventName.commIssueAvgFreq)
+        else:  # invalid or can_rcv_timeout.
+          self.events.add(EventName.commIssue)
 
       logs = {
         'invalid': [s for s, valid in self.sm.valid.items() if not valid],
@@ -458,7 +459,7 @@ class Controls:
     if not self.sm['liveParameters'].valid:
       self.events.add(EventName.vehicleModelInvalid)
     if not self.sm['lateralPlan'].mpcSolutionValid:
-      self.events.add(EventName.plannerError)
+      self.events.add(EventName.steerTempUnavailable if self.sm['dragonConf'].dpAtl else EventName.plannerError)
     if not (self.sm['liveParameters'].sensorValid or self.sm['liveLocationKalman'].sensorsOK) and not NOSENSOR:
       if self.sm.frame > 5 / DT_CTRL:  # Give locationd some time to receive all the inputs
         self.events.add(EventName.sensorDataInvalid)
@@ -542,10 +543,11 @@ class Controls:
       self.mismatch_counter = 0
 
     # All pandas not in silent mode must have controlsAllowed when openpilot is enabled
-    if self.enabled and any(not ps.controlsAllowed for ps in self.sm['pandaStates']
-           if ps.safetyModel not in IGNORED_SAFETY_MODES):
-      self.mismatch_counter += 1
-
+    if not self.sm['dragonConf'].dpAtl:
+      if self.enabled and any(not ps.controlsAllowed for ps in self.sm['pandaStates']
+            if ps.safetyModel not in IGNORED_SAFETY_MODES):
+        self.mismatch_counter += 1
+        
     self.distance_traveled += CS.vEgo * DT_CTRL
     # dp - local trip log
     self.local_trip_meter_total += CS.vEgo * DT_CTRL
@@ -868,9 +870,9 @@ class Controls:
       else:
         self.steer_limited = abs(CC.actuators.steer - CC.actuatorsOutput.steer) > 1e-2
 
-    force_decel = (self.sm['driverMonitoringState'].awarenessStatus < 0.) or \
-                  (self.state == State.softDisabling)
-
+    force_decel = False if self.dp_jetson else (self.sm['driverMonitoringState'].awarenessStatus < 0.) or \
+                    (self.state == State.softDisabling)
+    
     # Curvature & Steering angle
     lp = self.sm['liveParameters']
 
