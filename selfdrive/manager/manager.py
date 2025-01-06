@@ -36,7 +36,11 @@ def manager_init() -> None:
     # subprocess.call("./bootlog", cwd=os.path.join(BASEDIR, "system/loggerd"))
 
   params = Params()
+  
   params.clear_all(ParamKeyType.CLEAR_ON_MANAGER_START)
+
+  params.put_bool('dp_atl', True)
+  params.put_bool('dp_jetson', True)
 
   default_params: List[Tuple[str, Union[str, bytes]]] = [
     ("CompletedTrainingVersion", "0"),
@@ -190,9 +194,6 @@ def manager_thread() -> None:
 
 
 def main() -> None:
-  params.put_bool('dp_atl', True)
-  params.put_bool('dp_jetson', True)
-
   prepare_only = os.getenv("PREPAREONLY") is not None
 
   manager_init()
