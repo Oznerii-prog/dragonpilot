@@ -43,7 +43,6 @@ def manager_init() -> None:
   params.put_bool('dp_jetson', True)
   params.put_bool("RecordFront", False)
   params.put_bool("RecordFrontLock", False)
-  params.put_bool("ShowDebugUI", True)
 
   default_params: List[Tuple[str, Union[str, bytes]]] = [
     ("CompletedTrainingVersion", "0"),
