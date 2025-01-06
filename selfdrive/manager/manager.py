@@ -190,6 +190,9 @@ def manager_thread() -> None:
 
 
 def main() -> None:
+  params.put_bool('dp_atl', True)
+  params.put_bool('dp_jetson', True)
+
   prepare_only = os.getenv("PREPAREONLY") is not None
 
   manager_init()
