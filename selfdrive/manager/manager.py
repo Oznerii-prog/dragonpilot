@@ -36,11 +36,14 @@ def manager_init() -> None:
     # subprocess.call("./bootlog", cwd=os.path.join(BASEDIR, "system/loggerd"))
 
   params = Params()
-  
+
   params.clear_all(ParamKeyType.CLEAR_ON_MANAGER_START)
 
   params.put_bool('dp_atl', True)
   params.put_bool('dp_jetson', True)
+  params.put_bool("RecordFront", False)
+  params.put_bool("RecordFrontLock", False)
+  params.put_bool("ShowDebugUI", True)
 
   default_params: List[Tuple[str, Union[str, bytes]]] = [
     ("CompletedTrainingVersion", "0"),
