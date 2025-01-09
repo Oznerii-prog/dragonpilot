@@ -41,9 +41,7 @@ def manager_init() -> None:
 
   params.put_bool('dp_atl', True)
   params.put_bool('dp_jetson', True)
-  params.put_bool("RecordFront", False)
-  params.put_bool("RecordFrontLock", False)
-
+  
   default_params: List[Tuple[str, Union[str, bytes]]] = [
     ("CompletedTrainingVersion", "0"),
     ("DisengageOnAccelerator", "0"),
