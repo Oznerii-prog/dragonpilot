@@ -39,9 +39,6 @@ def manager_init() -> None:
 
   params.clear_all(ParamKeyType.CLEAR_ON_MANAGER_START)
 
-  params.put_bool('dp_atl', True)
-  params.put_bool('dp_jetson', True)
-  
   default_params: List[Tuple[str, Union[str, bytes]]] = [
     ("CompletedTrainingVersion", "0"),
     ("DisengageOnAccelerator", "0"),
