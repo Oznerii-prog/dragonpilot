@@ -61,11 +61,16 @@ function two_init {
   #echo 1 > /sys/devices/system/cpu/cpu3/online
 
   # android gets two cores
-  echo 0-1 > /dev/cpuset/background/cpus
-  echo 0-1 > /dev/cpuset/system-background/cpus
-  echo 0-1 > /dev/cpuset/foreground/cpus
-  echo 0-1 > /dev/cpuset/foreground/boost/cpus
-  echo 0-1 > /dev/cpuset/android/cpus
+  # echo 0-1 > /dev/cpuset/background/cpus
+  # echo 0-1 > /dev/cpuset/system-background/cpus
+  # echo 0-1 > /dev/cpuset/foreground/cpus
+  # echo 0-1 > /dev/cpuset/foreground/boost/cpus
+  # echo 0-1 > /dev/cpuset/android/cpus
+  echo 0-3 > /dev/cpuset/background/cpus
+  echo 0-3 > /dev/cpuset/system-background/cpus
+  echo 0-3 > /dev/cpuset/foreground/cpus
+  echo 0-3 > /dev/cpuset/foreground/boost/cpus
+  echo 0-3 > /dev/cpuset/android/cpus
 
   # openpilot gets all the cores
   echo 0-3 > /dev/cpuset/app/cpus
