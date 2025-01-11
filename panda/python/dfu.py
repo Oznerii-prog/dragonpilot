@@ -26,17 +26,17 @@ class PandaDFU:
   @staticmethod
   def usb_connect(dfu_serial: Optional[str]) -> Optional[STBootloaderUSBHandle]:
     handle = None
-    with usb1.USBContext() as context:
-      for device in context.getDeviceList(skip_on_error=True):
-        if device.getVendorID() == 0x0483 and device.getProductID() == 0xdf11:
-          try:
-            this_dfu_serial = device.open().getASCIIStringDescriptor(3)
-          except Exception:
-            continue
+    context = usb1.USBContext()
+    for device in context.getDeviceList(skip_on_error=True):
+      if device.getVendorID() == 0x0483 and device.getProductID() == 0xdf11:
+        try:
+          this_dfu_serial = device.open().getASCIIStringDescriptor(3)
+        except Exception:
+          continue
 
-          if this_dfu_serial == dfu_serial or dfu_serial is None:
-            handle = STBootloaderUSBHandle(device, device.open())
-            break
+        if this_dfu_serial == dfu_serial or dfu_serial is None:
+          handle = STBootloaderUSBHandle(device, device.open())
+          break
 
     return handle
 
@@ -64,17 +64,17 @@ class PandaDFU:
 
   @staticmethod
   def usb_list() -> List[str]:
+    context = usb1.USBContext()
     dfu_serials = []
-    with usb1.USBContext() as context:
-      try:
-        for device in context.getDeviceList(skip_on_error=True):
-          if device.getVendorID() == 0x0483 and device.getProductID() == 0xdf11:
-            try:
-              dfu_serials.append(device.open().getASCIIStringDescriptor(3))
-            except Exception:
-              pass
-      except Exception:
-        pass
+    try:
+      for device in context.getDeviceList(skip_on_error=True):
+        if device.getVendorID() == 0x0483 and device.getProductID() == 0xdf11:
+          try:
+            dfu_serials.append(device.open().getASCIIStringDescriptor(3))
+          except Exception:
+            pass
+    except Exception:
+      pass
     return dfu_serials
 
   @staticmethod

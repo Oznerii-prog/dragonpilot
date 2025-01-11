@@ -319,38 +319,39 @@ class Panda:
   @staticmethod
   def usb_connect(serial, claim=True, wait=False):
     handle, usb_serial, bootstub, bcd = None, None, None, None
+    context = usb1.USBContext()
     while 1:
-      with usb1.USBContext() as context:
-        try:
-          for device in context.getDeviceList(skip_on_error=True):
-            if device.getVendorID() == 0xbbaa and device.getProductID() in (0xddcc, 0xddee):
-              try:
-                this_serial = device.getSerialNumber()
-              except Exception:
-                continue
+      try:
+        for device in context.getDeviceList(skip_on_error=True):
+          if device.getVendorID() == 0xbbaa and device.getProductID() in (0xddcc, 0xddee):
+            try:
+              this_serial = device.getSerialNumber()
+            except Exception:
+              continue
 
-              if serial is None or this_serial == serial:
-                logging.debug("opening device %s %s", this_serial, hex(device.getProductID()))
+            if serial is None or this_serial == serial:
+              logging.debug("opening device %s %s", this_serial, hex(device.getProductID()))
 
-                usb_serial = this_serial
-                bootstub = device.getProductID() == 0xddee
-                handle = device.open()
-                if sys.platform not in ("win32", "cygwin", "msys", "darwin"):
-                  handle.setAutoDetachKernelDriver(True)
-                if claim:
-                  handle.claimInterface(0)
-                  # handle.setInterfaceAltSetting(0, 0)  # Issue in USB stack
+              usb_serial = this_serial
+              bootstub = device.getProductID() == 0xddee
+              handle = device.open()
+              if sys.platform not in ("win32", "cygwin", "msys", "darwin"):
+                handle.setAutoDetachKernelDriver(True)
+              if claim:
+                handle.claimInterface(0)
+                # handle.setInterfaceAltSetting(0, 0)  # Issue in USB stack
 
-                # bcdDevice wasn't always set to the hw type, ignore if it's the old constant
-                this_bcd = device.getbcdDevice()
-                if this_bcd is not None and this_bcd != 0x2300:
-                  bcd = bytearray([this_bcd >> 8, ])
+              # bcdDevice wasn't always set to the hw type, ignore if it's the old constant
+              this_bcd = device.getbcdDevice()
+              if this_bcd is not None and this_bcd != 0x2300:
+                bcd = bytearray([this_bcd >> 8, ])
 
-                break
-        except Exception:
-          logging.exception("USB connect error")
-        if not wait or handle is not None:
-          break
+              break
+      except Exception:
+        logging.exception("USB connect error")
+      if not wait or handle is not None:
+        break
+      context = usb1.USBContext()  # New context needed so new devices show up
 
     usb_handle = None
     if handle is not None:
@@ -366,21 +367,21 @@ class Panda:
 
   @staticmethod
   def usb_list():
+    context = usb1.USBContext()
     ret = []
-    with usb1.USBContext() as context:
-      try:
-        for device in context.getDeviceList(skip_on_error=True):
-          if device.getVendorID() == 0xbbaa and device.getProductID() in (0xddcc, 0xddee):
-            try:
-              serial = device.getSerialNumber()
-              if len(serial) == 24:
-                ret.append(serial)
-              else:
-                warnings.warn(f"found device with panda descriptors but invalid serial: {serial}", RuntimeWarning)
-            except Exception:
-              continue
-      except Exception:
-        pass
+    try:
+      for device in context.getDeviceList(skip_on_error=True):
+        if device.getVendorID() == 0xbbaa and device.getProductID() in (0xddcc, 0xddee):
+          try:
+            serial = device.getSerialNumber()
+            if len(serial) == 24:
+              ret.append(serial)
+            else:
+              warnings.warn(f"found device with panda descriptors but invalid serial: {serial}", RuntimeWarning)
+          except Exception:
+            continue
+    except Exception:
+      pass
     return ret
 
   @staticmethod
