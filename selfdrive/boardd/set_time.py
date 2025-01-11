@@ -14,8 +14,9 @@ def set_time(logger):
     return
 
   try:
-    ctx = usb1.USBContext()
-    dev = ctx.openByVendorIDAndProductID(0xbbaa, 0xddcc)
+    dev = None
+    with usb1.USBContext() as ctx:
+      dev = ctx.openByVendorIDAndProductID(0xbbaa, 0xddcc)
     if dev is None:
       logger.info("No panda found")
       return
