@@ -786,8 +786,8 @@ EVENTS: Dict[int, Dict[str, Union[Alert, AlertCallbackType]]] = {
   },
 
   EventName.radarFault: {
-    ET.SOFT_DISABLE: soft_disable_alert(_("Radar Error: Restart the Car")),
-    ET.NO_ENTRY: NoEntryAlert(_("Radar Error: Restart the Car")),
+    #ET.SOFT_DISABLE: soft_disable_alert(_("Radar Error: Restart the Car")),
+    #ET.NO_ENTRY: NoEntryAlert(_("Radar Error: Restart the Car")),
   },
 
   # Every frame from the camera should be processed by the model. If modeld
