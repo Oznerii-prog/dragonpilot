@@ -71,7 +71,7 @@ procs = [
   NativeProcess("ubloxd", "system/ubloxd", ["./ubloxd"], enabled=not PC, onroad=False, callback=ublox),
   # PythonProcess("pigeond", "system.sensord.pigeond", enabled=TICI, onroad=False, callback=ublox),
   PythonProcess("plannerd", "selfdrive.controls.plannerd"),
-  PythonProcess("radard", "selfdrive.controls.radard"),
+  # PythonProcess("radard", "selfdrive.controls.radard"),
   PythonProcess("thermald", "selfdrive.thermald.thermald", offroad=True),
   PythonProcess("tombstoned", "selfdrive.tombstoned", enabled=not PC, offroad=True),
   PythonProcess("updated", "selfdrive.updated", enabled=not PC, onroad=False, offroad=True),
