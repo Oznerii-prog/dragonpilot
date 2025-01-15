@@ -6,7 +6,7 @@ Route is a class for conveniently accessing all the [logs](/system/loggerd/) fro
 from openpilot.tools.lib.route import Route
 from openpilot.tools.lib.logreader import LogReader
 
-r = Route("a2a0ccea32023010|2023-07-27--13-01-19")
+r = Route("2025-01-15--08-44-52")
 
 # get a list of paths for the route's rlog files
 print(r.log_paths())
@@ -15,7 +15,7 @@ print(r.log_paths())
 print(r.camera_paths())
 
 # setup a LogReader to read the route's first rlog
-lr = LogReader(r.log_paths()[0])
+lr = LogReader(r.log_paths()[-1])
 
 # print out all the messages in the log
 import codecs
@@ -41,8 +41,13 @@ from openpilot.tools.lib.route import Route
 from openpilot.tools.lib.logreader import MultiLogIterator
 
 # setup a MultiLogIterator to read all the logs in the route
-r = Route("a2a0ccea32023010|2023-07-27--13-01-19")
+r = Route("2025-01-15--08-44-52")
 lr = MultiLogIterator(r.log_paths())
+
+# print all the events values from all the logs in the route
+for msg in lr:
+  if msg.which() == "carState":
+    print(msg.carState.events)
 
 # print all the steering angles values from all the logs in the route
 for msg in lr:

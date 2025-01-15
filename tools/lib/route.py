@@ -1,13 +1,11 @@
 import os
-import re
 from urllib.parse import urlparse
 from collections import defaultdict
 from itertools import chain
 from typing import Optional
 
-from openpilot.tools.lib.auth_config import get_token
-from openpilot.tools.lib.api import CommaApi
-from openpilot.tools.lib.helpers import RE
+# from openpilot.tools.lib.auth_config import get_token
+# from openpilot.tools.lib.api import CommaApi
 
 QLOG_FILENAMES = ['qlog', 'qlog.bz2']
 QCAMERA_FILENAMES = ['qcamera.ts']
@@ -17,7 +15,7 @@ DCAMERA_FILENAMES = ['dcamera.hevc']
 ECAMERA_FILENAMES = ['ecamera.hevc']
 
 class Route:
-  def __init__(self, name, data_dir=None):
+  def __init__(self, name, data_dir='/data/media/0/realdata'):
     self._name = RouteName(name)
     self.files = None
     if data_dir is not None:
@@ -97,27 +95,25 @@ class Route:
 
     for f in files:
       fullpath = os.path.join(data_dir, f)
-      explorer_match = re.match(RE.EXPLORER_FILE, f)
-      op_match = re.match(RE.OP_SEGMENT_DIR, f)
+      # explorer_match = re.match(RE.EXPLORER_FILE, f)
+      # op_match = re.match(RE.OP_SEGMENT_DIR, f)
 
-      if explorer_match:
-        segment_name = explorer_match.group('segment_name')
-        fn = explorer_match.group('file_name')
-        if segment_name.replace('_', '|').startswith(self.name.canonical_name):
-          segment_files[segment_name].append((fullpath, fn))
-      elif op_match and os.path.isdir(fullpath):
-        segment_name = op_match.group('segment_name')
-        if segment_name.startswith(self.name.canonical_name):
-          for seg_f in os.listdir(fullpath):
-            segment_files[segment_name].append((os.path.join(fullpath, seg_f), seg_f))
-      elif f == self.name.canonical_name:
-        for seg_num in os.listdir(fullpath):
-          if not seg_num.isdigit():
-            continue
+      # if explorer_match:
+      #   segment_name = explorer_match.group('segment_name')
+      #   fn = explorer_match.group('file_name')
+      #   if segment_name.replace('_', '|').startswith(self.name.canonical_name):
+      #     segment_files[segment_name].append((fullpath, fn))
+      # elif op_match and os.path.isdir(fullpath):
+      #   segment_name = op_match.group('segment_name')
+      #   if segment_name.startswith(self.name.canonical_name):
+      #     for seg_f in os.listdir(fullpath):
+      #       segment_files[segment_name].append((os.path.join(fullpath, seg_f), seg_f))
+      if self.name.canonical_name in f:
+        seg_num = f.split('--')[-1]
 
-          segment_name = f'{self.name.canonical_name}--{seg_num}'
-          for seg_f in os.listdir(os.path.join(fullpath, seg_num)):
-            segment_files[segment_name].append((os.path.join(fullpath, seg_num, seg_f), seg_f))
+        segment_name = f'{self.name.canonical_name}--{seg_num}'
+        for seg_f in os.listdir(fullpath):
+          segment_files[segment_name].append((os.path.join(fullpath, seg_f), seg_f))
 
     segments = []
     for segment, files in segment_files.items():
@@ -175,12 +171,11 @@ class Segment:
 class RouteName:
   def __init__(self, name_str: str):
     self._name_str = name_str
-    delim = next(c for c in self._name_str if c in ("|", "/"))
-    self._dongle_id, self._time_str = self._name_str.split(delim)
+    self._time_str = self._name_str
+    self._dongle_id = ''
 
-    assert len(self._dongle_id) == 16, self._name_str
     assert len(self._time_str) == 20, self._name_str
-    self._canonical_name = f"{self._dongle_id}|{self._time_str}"
+    self._canonical_name = f"{self._time_str}"
 
   @property
   def canonical_name(self) -> str: return self._canonical_name
@@ -208,7 +203,7 @@ class SegmentName:
       name_parts.append("-1") # no segment number
     self._route_name = RouteName(name_parts[0])
     self._num = int(name_parts[1])
-    self._canonical_name = f"{self._route_name._dongle_id}|{self._route_name._time_str}--{self._num}"
+    self._canonical_name = f"{self._route_name._time_str}--{self._num}"
 
   @property
   def canonical_name(self) -> str: return self._canonical_name
