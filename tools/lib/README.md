@@ -17,14 +17,30 @@ print(r.camera_paths())
 # setup a LogReader to read the route's first rlog
 lr = LogReader(r.log_paths()[-1])
 
+# print all the events values from all the logs in the route
+from collections import defaultdict
+events = defaultdict(list)
+for msg in lr:
+  if msg.which() == "carState":
+    for event in msg.carState.events:
+      # events[event.name].append(msg)
+      if event.immediateDisable or event.softDisable:
+        events[event.name].append(msg)
+
+print(list(events.keys()))
+
+for name, msg in events.items():
+  print(f'***************** {name}')
+  for m in msg:
+    print(m)
+    print()
+  print()
+
 # print out all the messages in the log
 import codecs
 codecs.register_error("strict", codecs.backslashreplace_errors)
 for msg in lr:
   print(msg)
-
-# setup a LogReader for the route's second qlog
-lr = LogReader(r.log_paths()[1])
 
 # print all the steering angles values from the log
 for msg in lr:
@@ -46,8 +62,8 @@ lr = MultiLogIterator(r.log_paths())
 
 # print all the events values from all the logs in the route
 for msg in lr:
-  if msg.which() == "carState":
-    print(msg.carState.events)
+  if msg.which() == "logMessage":
+    print(msg.logMessage)
 
 # print all the steering angles values from all the logs in the route
 for msg in lr:

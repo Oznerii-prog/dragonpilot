@@ -42,7 +42,7 @@ class ET:
   WARNING = 'warning'
   USER_DISABLE = 'userDisable'
   SOFT_DISABLE = 'softDisable'
-  IMMEDIATE_DISABLE = 'immediateDisable'
+  IMMEDIATE_DISABLE = 'softDisable' #'immediateDisable'
   PERMANENT = 'permanent'
 
 
@@ -908,7 +908,7 @@ EVENTS: Dict[int, Dict[str, Union[Alert, AlertCallbackType]]] = {
   # On cars that use stock ACC the car can decide to cancel ACC for various reasons.
   # When this happens we can no long control the car so the user needs to be warned immediately.
   EventName.cruiseDisabled: {
-    ET.IMMEDIATE_DISABLE: ImmediateDisableAlert(_("Cruise Is Off")),
+    # ET.IMMEDIATE_DISABLE: ImmediateDisableAlert(_("Cruise Is Off")),
   },
 
   # For planning the trajectory Model Predictive Control (MPC) is used. This is
