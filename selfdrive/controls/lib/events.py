@@ -42,7 +42,7 @@ class ET:
   WARNING = 'warning'
   USER_DISABLE = 'userDisable'
   SOFT_DISABLE = 'softDisable'
-  IMMEDIATE_DISABLE = 'softDisable' #'immediateDisable'
+  IMMEDIATE_DISABLE = 'immediateDisable'
   PERMANENT = 'permanent'
 
 
