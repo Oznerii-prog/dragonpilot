@@ -829,13 +829,13 @@ EVENTS: Dict[int, Dict[str, Union[Alert, AlertCallbackType]]] = {
   },
 
   EventName.accFaulted: {
-    ET.IMMEDIATE_DISABLE: ImmediateDisableAlert(_("Cruise Fault: Restart the Car")),
+    # ET.IMMEDIATE_DISABLE: ImmediateDisableAlert(_("Cruise Fault: Restart the Car")),
     ET.PERMANENT: NormalPermanentAlert(_("Cruise Fault: Restart the car to engage")),
     ET.NO_ENTRY: NoEntryAlert(_("Cruise Fault: Restart the Car")),
   },
 
   EventName.controlsMismatch: {
-    ET.IMMEDIATE_DISABLE: ImmediateDisableAlert(_("Controls Mismatch")),
+    # ET.IMMEDIATE_DISABLE: ImmediateDisableAlert(_("Controls Mismatch")),
     ET.NO_ENTRY: NoEntryAlert(_("Controls Mismatch")),
   },
 
@@ -870,7 +870,7 @@ EVENTS: Dict[int, Dict[str, Union[Alert, AlertCallbackType]]] = {
   # - CAN data is received, but some message are not received at the right frequency
   # If you're not writing a new car port, this is usually cause by faulty wiring
   EventName.canError: {
-    ET.IMMEDIATE_DISABLE: ImmediateDisableAlert(_("CAN Error")),
+    # ET.IMMEDIATE_DISABLE: ImmediateDisableAlert(_("CAN Error")),
     ET.PERMANENT: Alert(
       _("CAN Error: Check Connections"),
       "",
@@ -880,7 +880,7 @@ EVENTS: Dict[int, Dict[str, Union[Alert, AlertCallbackType]]] = {
   },
 
   EventName.canBusMissing: {
-    ET.IMMEDIATE_DISABLE: ImmediateDisableAlert(_("CAN Bus Disconnected")),
+    # ET.IMMEDIATE_DISABLE: ImmediateDisableAlert(_("CAN Bus Disconnected")),
     ET.PERMANENT: Alert(
       _("CAN Bus Disconnected: Likely Faulty Cable"),
       "",
@@ -890,7 +890,7 @@ EVENTS: Dict[int, Dict[str, Union[Alert, AlertCallbackType]]] = {
   },
 
   EventName.steerUnavailable: {
-    ET.IMMEDIATE_DISABLE: ImmediateDisableAlert(_("LKAS Fault: Restart the Car")),
+    # ET.IMMEDIATE_DISABLE: ImmediateDisableAlert(_("LKAS Fault: Restart the Car")),
     ET.PERMANENT: NormalPermanentAlert(_("LKAS Fault: Restart the car to engage")),
     ET.NO_ENTRY: NoEntryAlert(_("LKAS Fault: Restart the Car")),
   },
@@ -915,7 +915,7 @@ EVENTS: Dict[int, Dict[str, Union[Alert, AlertCallbackType]]] = {
   # an optimization algorithm that is not guaranteed to find a feasible solution.
   # If no solution is found or the solution has a very high cost this alert is thrown.
   EventName.plannerError: {
-    ET.IMMEDIATE_DISABLE: ImmediateDisableAlert(_("Planner Solution Error")),
+    # ET.IMMEDIATE_DISABLE: ImmediateDisableAlert(_("Planner Solution Error")),
     ET.NO_ENTRY: NoEntryAlert(_("Planner Solution Error")),
   },
 
@@ -924,17 +924,17 @@ EVENTS: Dict[int, Dict[str, Union[Alert, AlertCallbackType]]] = {
   # are received on the car side this usually means the relay hasn't opened correctly
   # and this alert is thrown.
   EventName.relayMalfunction: {
-    ET.IMMEDIATE_DISABLE: ImmediateDisableAlert(_("Harness Relay Malfunction")),
+    # ET.IMMEDIATE_DISABLE: ImmediateDisableAlert(_("Harness Relay Malfunction")),
     ET.PERMANENT: NormalPermanentAlert(_("Harness Relay Malfunction"), _("Check Hardware")),
     ET.NO_ENTRY: NoEntryAlert(_("Harness Relay Malfunction")),
   },
 
   EventName.speedTooLow: {
-    ET.IMMEDIATE_DISABLE: Alert(
-      _("openpilot Canceled"),
-      _("Speed too low"),
-      AlertStatus.normal, AlertSize.mid,
-      Priority.HIGH, VisualAlert.none, AudibleAlert.disengage, 3.),
+    # ET.IMMEDIATE_DISABLE: Alert(
+    #   _("openpilot Canceled"),
+    #   _("Speed too low"),
+    #   AlertStatus.normal, AlertSize.mid,
+    #   Priority.HIGH, VisualAlert.none, AudibleAlert.disengage, 3.),
   },
 
   # When the car is driving faster than most cars in the training data, the model outputs can be unpredictable.
@@ -958,7 +958,7 @@ EVENTS: Dict[int, Dict[str, Union[Alert, AlertCallbackType]]] = {
   },
 
   EventName.vehicleSensorsInvalid: {
-    ET.IMMEDIATE_DISABLE: ImmediateDisableAlert(_("Vehicle Sensors Invalid")),
+    # ET.IMMEDIATE_DISABLE: ImmediateDisableAlert(_("Vehicle Sensors Invalid")),
     ET.PERMANENT: NormalPermanentAlert(_("Vehicle Sensors Calibrating"), _("Drive to Calibrate")),
     ET.NO_ENTRY: NoEntryAlert(_("Vehicle Sensors Calibrating")),
   },

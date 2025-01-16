@@ -554,7 +554,7 @@ class Controls:
         self.current_alert_types.append(ET.USER_DISABLE)
 
       elif self.events.contains(ET.IMMEDIATE_DISABLE):
-        self.state = State.disabled
+        # self.state = State.disabled
         self.current_alert_types.append(ET.IMMEDIATE_DISABLE)
 
       else:
