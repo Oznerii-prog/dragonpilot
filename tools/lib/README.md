@@ -6,7 +6,7 @@ Route is a class for conveniently accessing all the [logs](/system/loggerd/) fro
 from openpilot.tools.lib.route import Route
 from openpilot.tools.lib.logreader import LogReader
 
-r = Route("2025-01-15--08-44-52")
+r = Route("2025-01-15--16-59-40")
 
 # get a list of paths for the route's rlog files
 print(r.log_paths())
@@ -25,7 +25,7 @@ for msg in lr:
     for event in msg.carState.events:
       # events[event.name].append(msg)
       if event.immediateDisable or event.softDisable:
-        events[event.name].append(msg)
+        events[event.name].append(event)
 
 print(list(events.keys()))
 
@@ -57,7 +57,7 @@ from openpilot.tools.lib.route import Route
 from openpilot.tools.lib.logreader import MultiLogIterator
 
 # setup a MultiLogIterator to read all the logs in the route
-r = Route("2025-01-15--08-44-52")
+r = Route("2025-01-15--16-59-40")
 lr = MultiLogIterator(r.log_paths())
 
 # print all the events values from all the logs in the route
