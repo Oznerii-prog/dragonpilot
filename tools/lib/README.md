@@ -99,6 +99,27 @@ print(directories[-1])
 r = Route(directories[-1])
 lr = [msg for msg in tqdm(MultiLogIterator(r.log_paths()))]
 
+sorted({msg.which() for msg in lr})
+
+msgs = sorted(lr, key=lambda m: m.logMonoTime)
+
+from queue import Queue
+q = Queue()
+for msg in msgs:
+  # if msg.which() == "errorLogMessage":
+  if q.full():
+    t = q.get()
+  if msg.which() in ['logMessage']:
+    q.put(msg)
+  if msg.logMonoTime == 741697858204:
+    break
+
+# Get items from the queue
+while not q.empty():
+    print(q.get())
+    print()
+
+
 # print all the events values from all the logs in the route
 import json
 for msg in lr:
