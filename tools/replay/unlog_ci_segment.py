@@ -15,34 +15,17 @@ from tools.lib.framereader import FrameReader
 from tools.lib.logreader import LogReader
 from selfdrive.test.openpilotci import get_url
 from tools.lib.route import Route
-import os
-
-sep = '--'
-directories = set()
-for dir_name in os.listdir('/data/media/0/realdata'):
-  try:
-    split_dir_name = dir_name.split(sep)
-    directories.add(sep.join(dir_name.split(sep)[:-1]))
-  except:
-    pass
-
-directories = sorted(directories)
-print(directories)
-print(directories[-1])
-
-r = Route(directories[-1])
-
 
 IGNORE = ['initData', 'sentinel']
-
 
 def input_ready():
   return select.select([sys.stdin], [], [], 0) == ([sys.stdin], [], [])
 
-
 def replay(route, segment, loop):
-  lr = LogReader(r.log_paths()[-1])
-  fr = FrameReader(r.camera_paths()[-1], readahead=True)
+  r = Route(route)
+
+  lr = LogReader(r.log_paths()[segment])
+  fr = FrameReader(r.camera_paths()[segment], readahead=True)
 
   # Build mapping from frameId to segmentId from roadEncodeIdx, type == fullHEVC
   msgs = [m for m in lr if m.which() not in IGNORE]
