@@ -23,6 +23,7 @@ def input_ready():
 
 def replay(route, segment, loop):
   r = Route(route)
+  segment = int(segment)
 
   lr = LogReader(r.log_paths()[segment])
   fr = FrameReader(r.camera_paths()[segment], readahead=True)
