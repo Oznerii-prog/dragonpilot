@@ -41,11 +41,21 @@ import codecs
 codecs.register_error("strict", codecs.backslashreplace_errors)
 for msg in lr:
   print(msg)
+  print()
 
 # print all the steering angles values from the log
 for msg in lr:
   if msg.which() == "carState":
     print(msg.carState.steeringAngleDeg)
+    print()
+
+# print all the steering angles values from the log
+for msg in lr:
+  if msg.which() == "carControl":
+    if msg.carControl.enabled:
+      print(msg.carControl)
+      print()
+
 ```
 
 ### MultiLogIterator
