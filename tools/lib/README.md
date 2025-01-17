@@ -5,8 +5,22 @@ Route is a class for conveniently accessing all the [logs](/system/loggerd/) fro
 ```python
 from openpilot.tools.lib.route import Route
 from openpilot.tools.lib.logreader import LogReader
+import os
 
-r = Route("2025-01-15--16-59-40")
+sep = '--'
+directories = set()
+for dir_name in os.listdir('/data/media/0/realdata'):
+  try:
+    split_dir_name = dir_name.split(sep)
+    directories.add(sep.join(dir_name.split(sep)[:-1]))
+  except:
+    pass
+
+directories = sorted(directories)
+print(directories)
+print(directories[-1])
+
+r = Route(directories[-1])
 
 # get a list of paths for the route's rlog files
 print(r.log_paths())
@@ -65,10 +79,33 @@ for msg in lr:
 ```python
 from openpilot.tools.lib.route import Route
 from openpilot.tools.lib.logreader import MultiLogIterator
+import os
+from tqdm import tqdm
+
+sep = '--'
+directories = set()
+for dir_name in os.listdir('/data/media/0/realdata'):
+  try:
+    split_dir_name = dir_name.split(sep)
+    directories.add(sep.join(dir_name.split(sep)[:-1]))
+  except:
+    pass
+
+directories = sorted(directories)
+print(directories)
+print(directories[-1])
 
 # setup a MultiLogIterator to read all the logs in the route
-r = Route("2025-01-15--16-59-40")
-lr = MultiLogIterator(r.log_paths())
+r = Route(directories[-1])
+lr = [msg for msg in tqdm(MultiLogIterator(r.log_paths()))]
+
+# print all the events values from all the logs in the route
+import json
+for msg in lr:
+  if msg.which() == "logMessage":
+    log_msg = json.loads(msg.logMessage)
+    if log_msg.get('level', '') == 'ERROR':
+      print(log_msg)
 
 # print all the events values from all the logs in the route
 for msg in lr:
