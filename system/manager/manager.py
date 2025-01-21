@@ -71,7 +71,7 @@ def manager_init() -> None:
     ("dp_device_disable_logging", "0"),
     ("dp_toyota_pcm_compensation", "0"),
     ("dp_device_is_clone", "0"),
-    ("dp_device_dm_unavailable", "0"),
+    ("dp_device_dm_unavailable", "1"),
     ("dp_toyota_enhanced_bsm", "0"),
     ("dp_toyota_auto_brake_hold", "0"),
     ("dp_toyota_sng", "0"),
@@ -97,9 +97,9 @@ def manager_init() -> None:
 
   params.put("dp_vehicle_list", get_support_vehicle_list())
 
-  if params.get_bool("RecordFrontLock"):
-    params.put_bool("RecordFront", True)
-
+  # if params.get_bool("RecordFrontLock"):
+  #   params.put_bool("RecordFront", True)
+  
   # set unset params
   for k, v in default_params:
     if params.get(k) is None:
@@ -123,6 +123,11 @@ def manager_init() -> None:
   params.put("GitRemote", build_metadata.openpilot.git_origin)
   params.put_bool("IsTestedBranch", build_metadata.tested_channel)
   params.put_bool("IsReleaseBranch", build_metadata.release_channel)
+
+  params.put_bool("IsDriverViewEnabled", False)
+  params.put_bool("dp_device_dm_unavailable", True)
+  params.put_bool("RecordFrontLock", False)
+  params.put_bool("RecordFront", False)
 
   # set dongle id
   reg_res = register(show_spinner=True)
@@ -175,15 +180,18 @@ def manager_thread() -> None:
 
   ignore: list[str] = []
   # dp
-  dp_device_dm_unavailable = params.get_bool("dp_device_dm_unavailable")
-  dp_device_is_clone = params.get_bool("dp_device_is_clone")
-  if dp_device_is_clone or dp_device_dm_unavailable:
-    ignore += ["manage_athenad", "uploader"]
-    if dp_device_dm_unavailable:
-      ignore += ["dmonitoringd", "dmonitoringmodeld"]
+  # dp_device_dm_unavailable = params.get_bool("dp_device_dm_unavailable")
+  # dp_device_is_clone = params.get_bool("dp_device_is_clone")
+  # if dp_device_is_clone or dp_device_dm_unavailable:
+  #   ignore += ["manage_athenad", "uploader"]
+  #   if dp_device_dm_unavailable:
+  #     ignore += ["dmonitoringd", "dmonitoringmodeld"]
 
-  if params.get("DongleId", encoding='utf8') in (None, UNREGISTERED_DONGLE_ID):
-    ignore += ["manage_athenad", "uploader"]
+  # if params.get("DongleId", encoding='utf8') in (None, UNREGISTERED_DONGLE_ID):
+  #   ignore += ["manage_athenad", "uploader"]
+
+  ignore += ["manage_athenad", "uploader", "dmonitoringd", "dmonitoringmodeld"]
+
   if os.getenv("NOBOARD") is not None:
     ignore.append("pandad")
   ignore += [x for x in os.getenv("BLOCK", "").split(",") if len(x) > 0]
