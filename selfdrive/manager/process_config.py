@@ -8,7 +8,11 @@ from selfdrive.manager.process import PythonProcess, NativeProcess, DaemonProces
 WEBCAM = os.getenv("USE_WEBCAM") is not None
 
 def driverview(started: bool, params: Params, CP: car.CarParams) -> bool:
-  return params.get_bool("IsDriverViewEnabled")  # type: ignore
+  # return params.get_bool("IsDriverViewEnabled")  # type: ignore
+  return False  # type: ignore
+
+def only_onroad(started: bool, params: Params, CP: car.CarParams) -> bool:
+  return started
 
 def notcar(started: bool, params: Params, CP: car.CarParams) -> bool:
   return CP.notCar  # type: ignore
@@ -31,12 +35,12 @@ def qcomgps(started, params, CP: car.CarParams) -> bool:
 
 procs = [
   # due to qualcomm kernel bugs SIGKILLing camerad sometimes causes page table corruption
-  NativeProcess("camerad", "system/camerad", ["./camerad"], unkillable=True, callback=driverview),
+  NativeProcess("camerad", "system/camerad", ["./camerad"], unkillable=True, callback=only_onroad),
   NativeProcess("clocksd", "system/clocksd", ["./clocksd"]),
   NativeProcess("logcatd", "system/logcatd", ["./logcatd"]),
   NativeProcess("proclogd", "system/proclogd", ["./proclogd"]),
   PythonProcess("logmessaged", "system.logmessaged", offroad=True),
-  PythonProcess("micd", "system.micd"),
+  PythonProcess("micd", "system.micd", enabled=False),
   PythonProcess("timezoned", "system.timezoned", enabled=not PC, offroad=True),
 
   DaemonProcess("manage_athenad", "selfdrive.athena.manage_athenad", "AthenadPid"),
@@ -68,7 +72,7 @@ procs = [
   PythonProcess("thermald", "selfdrive.thermald.thermald", offroad=True),
   PythonProcess("tombstoned", "selfdrive.tombstoned", enabled=not PC, offroad=True),
   PythonProcess("updated", "selfdrive.updated", enabled=not PC, onroad=False, offroad=True),
-  PythonProcess("uploader", "system.loggerd.uploader", offroad=True),
+  PythonProcess("uploader", "system.loggerd.uploader", enabled=False),
   PythonProcess("statsd", "selfdrive.statsd", offroad=True),
 
   # debug procs

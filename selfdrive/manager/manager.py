@@ -59,8 +59,8 @@ def manager_init() -> None:
   if not PC:
     default_params.append(("LastUpdateTime", datetime.datetime.utcnow().isoformat().encode('utf8')))
 
-  if params.get_bool("RecordFrontLock"):
-    params.put_bool("RecordFront", True)
+  # if params.get_bool("RecordFrontLock"):
+  #   params.put_bool("RecordFront", True)
 
   # set unset params
   for k, v in default_params:
@@ -94,6 +94,10 @@ def manager_init() -> None:
   params.put("GitRemote", get_origin(default=""))
   params.put_bool("IsTestedBranch", is_tested_branch())
   params.put_bool("IsReleaseBranch", is_release_branch())
+
+  params.put_bool("IsDriverViewEnabled", False)
+  params.put_bool("RecordFrontLock", False)
+  params.put_bool("RecordFront", False)
 
   # set dongle id
   reg_res = register(show_spinner=True)
@@ -163,6 +167,8 @@ def manager_thread() -> None:
   if os.getenv("NOBOARD") is not None:
     ignore.append("pandad")
   ignore += [x for x in os.getenv("BLOCK", "").split(",") if len(x) > 0]
+
+  ignore += ["manage_athenad", "uploader", "dmonitoringd", "dmonitoringmodeld"]
 
   sm = messaging.SubMaster(['deviceState', 'carParams'], poll=['deviceState'])
   pm = messaging.PubMaster(['managerState'])
