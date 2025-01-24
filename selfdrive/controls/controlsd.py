@@ -23,6 +23,7 @@ from openpilot.selfdrive.controls.lib.alertmanager import AlertManager, set_offr
 from openpilot.selfdrive.controls.lib.drive_helpers import VCruiseHelper, clip_curvature
 from openpilot.selfdrive.controls.lib.events import Events, ET
 from openpilot.selfdrive.controls.lib.latcontrol import LatControl, MIN_LATERAL_CONTROL_SPEED
+from openpilot.selfdrive.controls.lib.latcontrol_lqr import LatControlLQR
 from openpilot.selfdrive.controls.lib.latcontrol_pid import LatControlPID
 from openpilot.selfdrive.controls.lib.latcontrol_angle import LatControlAngle, STEER_ANGLE_SATURATION_THRESHOLD
 from openpilot.selfdrive.controls.lib.latcontrol_torque import LatControlTorque
@@ -160,7 +161,9 @@ class Controls:
     self.VM = VehicleModel(self.CP)
 
     self.LaC: LatControl
-    if self.CP.steerControlType == car.CarParams.SteerControlType.angle:
+    if self.params.get_bool("dp_lateral_lqr"):
+      self.LaC = LatControlLQR(self.CP, self.CI)
+    elif self.CP.steerControlType == car.CarParams.SteerControlType.angle:
       self.LaC = LatControlAngle(self.CP, self.CI)
     elif self.CP.lateralTuning.which() == 'pid':
       self.LaC = LatControlPID(self.CP, self.CI)

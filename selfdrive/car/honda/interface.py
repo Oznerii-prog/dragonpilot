@@ -9,6 +9,7 @@ from openpilot.selfdrive.car.honda.values import CarControllerParams, CruiseButt
 from openpilot.selfdrive.car import create_button_events, get_safety_config
 from openpilot.selfdrive.car.interfaces import CarInterfaceBase
 from openpilot.selfdrive.car.disable_ecu import disable_ecu
+from openpilot.common.params import Params
 
 
 ButtonType = car.CarState.ButtonEvent.Type
@@ -213,7 +214,12 @@ class CarInterface(CarInterfaceBase):
 
     ret.steerActuatorDelay = 0.1
     ret.steerLimitTimer = 0.8
+    
+    if Params().get_bool('dp_honda_eps_mod'):
+      ret.lateralParams.torqueBP, ret.lateralParams.torqueV = [[0, 2564, 8000], [0, 2564, 3840]]
+      ret.lateralTuning.pid.kpV, ret.lateralTuning.pid.kiV = [[0.3], [0.09]] #2.5 default mod #Tuned by TMG
 
+    CarInterfaceBase.configure_lqr_tune(ret.lateralTuning)
     return ret
 
   @staticmethod
