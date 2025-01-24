@@ -36,6 +36,9 @@ def qcomgps(started, params, CP: car.CarParams) -> bool:
 def always_run(started, params, CP: car.CarParams) -> bool:
   return True
 
+def never_run(started, params, CP: car.CarParams) -> bool:
+  return False
+
 def only_onroad(started: bool, params, CP: car.CarParams) -> bool:
   return started
 
@@ -69,7 +72,7 @@ procs = [
   NativeProcess("logcatd", "system/logcatd", ["./logcatd"], dp_logging),
   NativeProcess("proclogd", "system/proclogd", ["./proclogd"], dp_logging),
   PythonProcess("logmessaged", "system.logmessaged", dp_logging),
-  PythonProcess("micd", "system.micd", False),
+  PythonProcess("micd", "system.micd", never_run),
   PythonProcess("timed", "system.timed", always_run, enabled=not PC),
 
   PythonProcess("dmonitoringmodeld", "selfdrive.modeld.dmonitoringmodeld", driverview, enabled=(not PC or WEBCAM)),
@@ -79,7 +82,7 @@ procs = [
   NativeProcess("modeld", "selfdrive/modeld", ["./modeld"], only_onroad),
   NativeProcess("sensord", "system/sensord", ["./sensord"], only_onroad, enabled=not PC),
   NativeProcess("ui", "selfdrive/ui", ["./ui"], always_run, watchdog_max_dt=(5 if not PC else None)),
-  PythonProcess("soundd", "selfdrive.ui.soundd", False),
+  PythonProcess("soundd", "selfdrive.ui.soundd", never_run),
   NativeProcess("locationd", "selfdrive/locationd", ["./locationd"], only_onroad),
   NativeProcess("pandad", "selfdrive/pandad", ["./pandad"], always_run, enabled=False),
   PythonProcess("calibrationd", "selfdrive.locationd.calibrationd", only_onroad),
@@ -99,7 +102,7 @@ procs = [
   PythonProcess("hardwared", "system.hardware.hardwared", always_run),
   PythonProcess("tombstoned", "system.tombstoned", always_run, enabled=not PC),
   PythonProcess("updated", "system.updated.updated", only_offroad, enabled=not PC),
-  PythonProcess("uploader", "system.loggerd.uploader", False),
+  PythonProcess("uploader", "system.loggerd.uploader", never_run),
   PythonProcess("statsd", "system.statsd", always_run),
 
   # debug procs
