@@ -217,7 +217,7 @@ class CarInterfaceBase(ABC):
   @staticmethod
   def configure_lqr_tune(tune):
     if ParamsPerso().dp_lateral_lqr:
-      tune.init('lqr')
+      tune.init('lqrDEPRECATED')
       tune.lqr.scale = 1500.0
       tune.lqr.ki = 0.05
 
