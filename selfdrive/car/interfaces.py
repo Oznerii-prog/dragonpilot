@@ -19,7 +19,7 @@ from openpilot.selfdrive.controls.lib.drive_helpers import V_CRUISE_MAX
 from openpilot.selfdrive.controls.lib.events import Events
 from openpilot.selfdrive.controls.lib.vehicle_model import VehicleModel
 from openpilot.selfdrive.pandad import can_capnp_to_list
-from openpilot.common.params import Params
+from openpilot.common.params_perso import ParamsPerso
 
 ButtonType = car.CarState.ButtonEvent.Type
 GearShifter = car.CarState.GearShifter
@@ -216,7 +216,7 @@ class CarInterfaceBase(ABC):
 
   @staticmethod
   def configure_lqr_tune(tune):
-    if Params().get_bool("dp_lateral_lqr"):
+    if ParamsPerso().dp_lateral_lqr:
       tune.init('lqr')
       tune.lqr.scale = 1500.0
       tune.lqr.ki = 0.05

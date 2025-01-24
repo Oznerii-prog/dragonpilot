@@ -74,8 +74,6 @@ def manager_init() -> None:
     ("dp_device_dm_unavailable", "1"),
     ("dp_toyota_enhanced_bsm", "0"),
     ("dp_toyota_auto_brake_hold", "0"),
-    ("dp_lateral_lqr", "1"),
-    ("dp_honda_eps_mod", "1"),
     ("dp_toyota_sng", "0"),
     ("dp_tetoo", "0"),
     ("dp_tetoo_data", ""),

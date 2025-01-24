@@ -29,6 +29,7 @@ from openpilot.selfdrive.controls.lib.latcontrol_angle import LatControlAngle, S
 from openpilot.selfdrive.controls.lib.latcontrol_torque import LatControlTorque
 from openpilot.selfdrive.controls.lib.longcontrol import LongControl
 from openpilot.selfdrive.controls.lib.vehicle_model import VehicleModel
+from openpilot.common.params_perso import ParamsPerso
 
 # dp - for lat priority mode
 from openpilot.dp_ext.selfdrive.controls.lib.drive_helpers import get_lag_adjusted_curvature
@@ -161,7 +162,7 @@ class Controls:
     self.VM = VehicleModel(self.CP)
 
     self.LaC: LatControl
-    if self.params.get_bool("dp_lateral_lqr"):
+    if ParamsPerso().dp_lateral_lqr:
       self.LaC = LatControlLQR(self.CP, self.CI)
     elif self.CP.steerControlType == car.CarParams.SteerControlType.angle:
       self.LaC = LatControlAngle(self.CP, self.CI)
